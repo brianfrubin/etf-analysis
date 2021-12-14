@@ -2,15 +2,6 @@
 import streamlit as st
 import requests
 
-#from configparser import ConfigParser
-#parser = ConfigParser()
-#_ = parser.read('notebook.cfg')
-
-#nasdaq_auth_key = parser.get('my_api', 'nasd_key')
-#quant_auth_key = parser.get('my_api', 'quant_key')
-#alpha_auth_key = parser.get('my_api', 'alpha_key')
-#snap_auth_key = parser.get('my_api', 'snap_key')
-
 nasdaq_auth_key = st.secrets['nasd_key']
 quant_auth_key = st.secrets['quant_key']
 alpha_auth_key = st.secrets['alpha_key']
@@ -63,17 +54,31 @@ def alpha_historical_daily(ticker, start_date, end_date):
     df_daily['MA20'] = df_daily['adjusted_close'].rolling(20).mean()
 
     # Engineering RSI-14 Indicator and 70/30 Bands
-    ticker_rsi = df_daily.ta.rsi(close='adjusted_close', length=14, signal_indicators=True, xa=70, xb=30)
+    # RSI Calculation Formula : https://www.macroption.com/rsi-calculation/
+    #RSI = 100 – 100 / ( 1 + RS )
+    #RS = Relative Strength = AvgU / AvgD
+    #AvgU = average of all up moves in the last N price bars
+    #AvgD = average of all down moves in the last N price bars
+    #N = the period of RSI
+    # Manually calculating RSI-14 using SMA - code used from this post : https://stackoverflow.com/questions/20526414/relative-strength-index-in-python-pandas
+    adj_close = df_daily['adjusted_close']
+    # Getting price difference from previous day
+    price_diff = adj_close.diff()
 
-    # Creating Final DataFrame
-    ticker_final = pd.concat([df_daily.reset_index(drop=True),ticker_rsi.reset_index(drop=True)], axis=1)
+    # Make the positive gains (up) and negative gains (down) Series
+    up, down = price_diff.clip(lower=0), price_diff.clip(upper=0).abs()
+
+    # Calculate the RSI based on SMA
+    roll_up = up.rolling(14).mean()
+    roll_down = down.rolling(14).mean()
+    rs = roll_up / roll_down
+    rsi_sma = 100.0 - (100.0 / (1.0 + rs))
+    df_daily['RSI_14'] = rsi_sma
 
     # Finalizing with a new Cumulative Return % column
-    ticker_final['cum_return_percent'] = ticker_final.cum_return -1
+    df_daily['cum_return_percent'] = df_daily.cum_return -1
 
-    # Setting Datetime index
-    ticker_final.index = df_daily.index
-    return ticker_final
+    return df_daily
 # takes ticker & date range. spits out tech chart w/ price, vol, RSI, candlestick&line graph
 def ticker_analysis(ticker, start_date, end_date):
     # Calling alpha_historical_daily function to get all ticker data
@@ -122,7 +127,7 @@ def ticker_analysis(ticker, start_date, end_date):
     fig.add_hline(
         y=40, col=1, row=3, line_color='#93a1a1', line_width=1.5, line_dash='dash')
     fig.add_hline(
-        y=90, col=1, row=3, line_color='#93a1a1', line_width=1.5, line_dash='dash')
+        y=80, col=1, row=3, line_color='#93a1a1', line_width=1.5, line_dash='dash')
 
     fig.update_layout(
         height=800, width=1075, showlegend=True, xaxis_rangeslider_visible=False,
@@ -296,7 +301,6 @@ def ticker_comparison(ticker1, ticker2, start_date, end_date):
     fig.update_yaxes(title_text=f"{ticker2} Price", secondary_y=True)
 
     return fig
-
 
 # SIDEBAR CODE
 ##silence deprecationwarnings
