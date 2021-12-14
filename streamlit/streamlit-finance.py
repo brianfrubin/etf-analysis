@@ -324,18 +324,6 @@ cols1, cols2 = st.sidebar.columns(2)
 cols1.warning("[![Foo](https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Linkedin_unofficial_colored_svg-48.png)](https://www.linkedin.com/in/brian-f-rubin/)")
 cols2.warning("[![Foo](https://img.icons8.com/material-outlined/48/000000/github.png)](https://github.com/brianfrubin/etf-analysis)")
 
-st.markdown(
-    """
-<style>
-.sidebar .sidebar-content {
-    background-image: linear-gradient(#2e7bcf,#2e7bcf);
-    color: white;
-}
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
 # HOMEPAGE CODE
 if page == 'Home Page':
     max_width= 900
