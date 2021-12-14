@@ -9,7 +9,6 @@ snap_auth_key = st.secrets['snap_key']
 
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
 
 import plotly.express as px
 import plotly.graph_objects as go
