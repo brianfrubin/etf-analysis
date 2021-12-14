@@ -1,4 +1,0 @@
-gcc
-make
-procps
-strace
