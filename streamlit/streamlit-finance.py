@@ -324,8 +324,6 @@ cols1, cols2 = st.sidebar.columns(2)
 cols1.warning("[![Foo](https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Linkedin_unofficial_colored_svg-48.png)](https://www.linkedin.com/in/brian-f-rubin/)")
 cols2.warning("[![Foo](https://img.icons8.com/material-outlined/48/000000/github.png)](https://github.com/brianfrubin/etf-analysis)")
 
-
-
 # HOMEPAGE CODE
 if page == 'Home Page':
     max_width= 900
@@ -398,8 +396,8 @@ if page == 'One Ticker':
     padding_right=1
     padding_left=1
     padding_bottom=10
-    COLOR = '#000000'
-    BACKGROUND_COLOR = '#000000'
+    COLOR = '#151620'
+    BACKGROUND_COLOR = '#151620'
     st.markdown(
             f"""
     <style>
