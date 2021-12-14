@@ -398,8 +398,8 @@ if page == 'One Ticker':
     padding_right=1
     padding_left=1
     padding_bottom=10
-    COLOR = '#000000'
-    BACKGROUND_COLOR = '#000000'
+    COLOR = '#151620'
+    BACKGROUND_COLOR = '#151620'
     st.markdown(
             f"""
     <style>
