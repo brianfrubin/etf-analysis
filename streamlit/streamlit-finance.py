@@ -1,14 +1,19 @@
 # IMPORTS/KEYS
 import streamlit as st
 import requests
-from configparser import ConfigParser
-parser = ConfigParser()
-_ = parser.read('notebook.cfg')
+#from configparser import ConfigParser
+#parser = ConfigParser()
+#_ = parser.read('notebook.cfg')
 
-nasdaq_auth_key = parser.get('my_api', 'nasd_key')
-quant_auth_key = parser.get('my_api', 'quant_key')
-alpha_auth_key = parser.get('my_api', 'alpha_key')
-snap_auth_key = parser.get('my_api', 'snap_key')
+#nasdaq_auth_key = parser.get('my_api', 'nasd_key')
+#quant_auth_key = parser.get('my_api', 'quant_key')
+#alpha_auth_key = parser.get('my_api', 'alpha_key')
+#snap_auth_key = parser.get('my_api', 'snap_key')
+
+nasdaq_auth_key = st.secrets['nasd_key']
+quant_auth_key = st.secrets['quant_key']
+alpha_auth_key = st.secrets['alpha_key']
+snap_auth_key = st.secrets['snap_key']
 
 import numpy as np
 import pandas as pd
@@ -296,10 +301,10 @@ def ticker_comparison(ticker1, ticker2, start_date, end_date):
 ##silence deprecationwarnings
 st.set_option('deprecation.showPyplotGlobalUse', False)
 ##sidebar title and subheader
-st.sidebar.title('Sentiment Matters')
+st.sidebar.title('Pulse Analytics')
 st.sidebar.subheader('Dashboard')
 ##setting up all the pages
-page = st.sidebar.selectbox( '', ('Home Page', 'Price Chart', 'Return Calculator', 'Comparison Charts', 'KEKW ETF'))
+page = st.sidebar.selectbox( '', ('Home Page', 'One Ticker', 'Two Tickers', 'Performance', 'LITQ ETF'))
 st.sidebar.write('--------')
 st.sidebar.write('--------')
 ##listing sources of data
@@ -356,7 +361,7 @@ if page == 'Home Page':
     for i in range(len(top_news['data'])):
         sentiment.append(top_news['data'][i]['sentiment'])
     df = pd.DataFrame(data=np.array(sentiment), index=None,  columns=['sentiment'])
-    st.title('Market Headlines')
+    st.title('MARKET HEADLINES')
     # Displaying Sentiment Count for Top 50 Headlines
     neu, neg, pos = st.columns(3)
     neu.code(f'Neutral : {df.value_counts()[0]}')
@@ -384,7 +389,7 @@ if page == 'Home Page':
             context.error(top_news['data'][i]['sentiment'])
         st.write('------------')
 
-if page == 'Price Chart':
+if page == 'One Ticker':
     # Adjusting layout, found this solution : https://discuss.streamlit.io/t/where-to-set-page-width-when-set-into-non-widescreeen-mode/959
     max_width= 1100
     padding_top= 5
@@ -411,7 +416,7 @@ if page == 'Price Chart':
     """,
             unsafe_allow_html=True,
         )
-    st.title('Stock/ETF Analysis')
+    st.title('SELECT YOUR TICKER')
     st.write('-----------')
     my_bar = st.progress(0)
 
@@ -428,7 +433,46 @@ if page == 'Price Chart':
 
     st.plotly_chart(ticker_analysis(tick, start, end))
 
-if page == 'Return Calculator':
+    st.write('-----------')
+
+    # Setting up API pull request for single ticker
+    url2 = f'https://stocknewsapi.com/api/v1?tickers={tick}&items=50&token={snap_auth_key}'
+    r2 = requests.get(url2)
+    ticker_news = r2.json()
+    # Creating Sentiment Count for Top 50 Headlines
+    sentiment2 = []
+    for i in range(len(ticker_news['data'])):
+        sentiment2.append(ticker_news['data'][i]['sentiment'])
+    df2 = pd.DataFrame(data=np.array(sentiment2), index=None,  columns=['sentiment'])
+    st.title(f'{tick} HEADLINES')
+    # Displaying Sentiment Count for Top 50 Headlines
+    neu2, neg2, pos2 = st.columns(3)
+    neu2.code(f'Neutral : {df2.value_counts()[0]}')
+    neg2.error(f'Negative : {df2.value_counts()[1]}')
+    pos2.success(f'Positive : {df2.value_counts()[2]}')
+    st.write('-----------')
+
+    # API call to pull top 50 headlines with title, source, date, and sentiment score
+    for i in range (50):
+        response2 = requests.get(f"{ticker_news['data'][i]['image_url']}")
+        picture2, context2 = st.columns(2)
+        img2 = Image.open(BytesIO(response2.content))
+    #    img = Image.open(f"[{top_news['data'][i]['title']}]")
+        img2 = img2.resize((400,300), Image.ANTIALIAS)
+        #img.resize((500,500), Image.ANTIALIAS)
+        picture2.image(img2)
+        context2.write(f"[{ticker_news['data'][i]['title']}]({ticker_news['data'][i]['news_url']})")
+        context2.caption(f"{ticker_news['data'][i]['text']}")
+        context2.caption(f"{ticker_news['data'][i]['source_name']} / {ticker_news['data'][i]['date']}")
+        if ticker_news['data'][i]['sentiment'] == 'Neutral':
+            context2.code(ticker_news['data'][i]['sentiment'])
+        elif ticker_news['data'][i]['sentiment'] == 'Positive':
+            context2.success(ticker_news['data'][i]['sentiment'])
+        else:
+            context2.error(ticker_news['data'][i]['sentiment'])
+        st.write('------------')
+
+if page == 'Two Tickers':
         # Formatting layout
         max_width= 1100
         padding_top= 5
@@ -456,49 +500,7 @@ if page == 'Return Calculator':
                 unsafe_allow_html=True,
             )
 
-        st.title('Visualize Performance')
-        st.write('-----------')
-        my_bar = st.progress(0)
-        for percent_complete in range(100):
-            time.sleep(0.0001)
-            my_bar.progress(percent_complete + 1)
-        tick2, start2, end2 = st.columns(3)
-        tick2 = tick2.text_input('Select Ticker', 'SPY')
-        start2 = start2.text_input('Start Date', '2021-01-01')
-        end2 = end2.text_input('End Date', date.today())
-        st.write('-----------')
-
-        st.plotly_chart(ticker_cum_return(tick2, start2, end2))
-
-if page == 'Comparison Charts':
-        # Formatting layout
-        max_width= 1100
-        padding_top= 5
-        padding_right=1
-        padding_left=1
-        padding_bottom=10
-        COLOR = '#151620'
-        BACKGROUND_COLOR = '#151620'
-        st.markdown(
-                f"""
-        <style>
-            .reportview-container .main .block-container{{
-                max-width: {max_width}px;
-                padding-top: {padding_top}rem;
-                padding-right: {padding_right}rem;
-                padding-left: {padding_left}rem;
-                padding-bottom: {padding_bottom}rem;
-            }}
-            .reportview-container .main {{
-                color: {COLOR};
-                background-color: {BACKGROUND_COLOR};
-            }}
-        </style>
-        """,
-                unsafe_allow_html=True,
-            )
-
-        st.title('Stock/ETF Comparison')
+        st.title('SELECT YOUR TICKERS')
         st.write('-----------')
         my_bar = st.progress(0)
         for percent_complete in range(100):
@@ -512,7 +514,89 @@ if page == 'Comparison Charts':
         tick3 = tick3.text_input('Select Ticker 1', 'FB')
         tick4 = tick4.text_input('Select Ticker 2', 'BX')
         st.write('---------')
+        st.markdown('<p style="text-align: left;">&nbsp; &nbsp;<span style="font-size: 22px;">👇️</span></p>', unsafe_allow_html=True)
         if st.button('Compare'):
             st.plotly_chart(ticker_cum_return_comp(tick3, tick4, start3, end3))
             st.write('---------')
             st.plotly_chart(ticker_comparison(tick3, tick4, start3, end3))
+            st.write('---------')
+            st.write(f'{tick3} / {tick4} HEADLINES')
+            st.write('---------')
+            # Setting up API pull request for multiple tickers
+            url3 = f'https://stocknewsapi.com/api/v1?tickers={tick3},{tick4}&items=50&token={snap_auth_key}'
+            r3 = requests.get(url3)
+            tickers_news = r3.json()
+            # Creating Sentiment Count for Top 50 Headlines
+            sentiment3 = []
+            for i in range(len(tickers_news['data'])):
+                sentiment3.append(tickers_news['data'][i]['sentiment'])
+            df3 = pd.DataFrame(data=np.array(sentiment3), index=None,  columns=['sentiment'])
+            st.title(f'{tick3}/{tick4} Headlines')
+            # Displaying Sentiment Count for Top 50 Headlines
+            neu3, neg3, pos3 = st.columns(3)
+            neu3.code(f'Neutral : {df3.value_counts()[0]}')
+            neg3.error(f'Negative : {df3.value_counts()[1]}')
+            pos3.success(f'Positive : {df3.value_counts()[2]}')
+            st.write('-----------')
+
+            # API call to pull top 50 headlines with title, source, date, and sentiment score
+            for i in range (50):
+                response3 = requests.get(f"{tickers_news['data'][i]['image_url']}")
+                picture3, context3 = st.columns(2)
+                img3 = Image.open(BytesIO(response3.content))
+            #    img = Image.open(f"[{top_news['data'][i]['title']}]")
+                img3 = img3.resize((400,300), Image.ANTIALIAS)
+                #img.resize((500,500), Image.ANTIALIAS)
+                picture3.image(img3)
+                context3.write(f"[{tickers_news['data'][i]['title']}]({tickers_news['data'][i]['news_url']})")
+                context3.caption(f"{tickers_news['data'][i]['text']}")
+                context3.caption(f"{tickers_news['data'][i]['source_name']} / {tickers_news['data'][i]['date']}")
+                if tickers_news['data'][i]['sentiment'] == 'Neutral':
+                    context3.code(tickers_news['data'][i]['sentiment'])
+                elif tickers_news['data'][i]['sentiment'] == 'Positive':
+                    context3.success(tickers_news['data'][i]['sentiment'])
+                else:
+                    context3.error(tickers_news['data'][i]['sentiment'])
+                st.write('------------')
+
+if page == 'Performance':
+        # Formatting layout
+        max_width= 1100
+        padding_top= 5
+        padding_right=1
+        padding_left=1
+        padding_bottom=10
+        COLOR = '#151620'
+        BACKGROUND_COLOR = '#151620'
+        st.markdown(
+                f"""
+        <style>
+            .reportview-container .main .block-container{{
+                max-width: {max_width}px;
+                padding-top: {padding_top}rem;
+                padding-right: {padding_right}rem;
+                padding-left: {padding_left}rem;
+                padding-bottom: {padding_bottom}rem;
+            }}
+            .reportview-container .main {{
+                color: {COLOR};
+                background-color: {BACKGROUND_COLOR};
+            }}
+        </style>
+        """,
+                unsafe_allow_html=True,
+            )
+
+        st.title('RETURN CALCULATOR')
+        st.write('-----------')
+        my_bar = st.progress(0)
+        for percent_complete in range(100):
+            time.sleep(0.0001)
+            my_bar.progress(percent_complete + 1)
+        tick2, start2, end2 = st.columns(3)
+        tick2 = tick2.text_input('Select Ticker', 'SPY')
+        start2 = start2.text_input('Start Date', '2021-01-01')
+        end2 = end2.text_input('End Date', date.today())
+        st.write('-----------')
+
+        st.plotly_chart(ticker_cum_return(tick2, start2, end2))
