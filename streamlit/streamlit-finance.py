@@ -363,10 +363,10 @@ if page == 'Home Page':
     df = pd.DataFrame(data=np.array(sentiment), index=None,  columns=['sentiment'])
     st.title('MARKET HEADLINES')
     # Displaying Sentiment Count for Top 50 Headlines
-    neu, neg, pos = st.columns(3)
+    neu, pos, neg = st.columns(3)
     neu.code(f'Neutral : {df.value_counts()[0]}')
-    neg.error(f'Negative : {df.value_counts()[1]}')
-    pos.success(f'Positive : {df.value_counts()[2]}')
+    pos.error(f'Positive : {df.value_counts()[1]}')
+    neg.success(f'Negative : {df.value_counts()[2]}')
     st.write('-----------')
 
     # API call to pull top 50 headlines with title, source, date, and sentiment score
@@ -446,10 +446,10 @@ if page == 'One Ticker':
     df2 = pd.DataFrame(data=np.array(sentiment2), index=None,  columns=['sentiment'])
     st.title(f'{tick} HEADLINES')
     # Displaying Sentiment Count for Top 50 Headlines
-    neu2, neg2, pos2 = st.columns(3)
+    neu2, pos2, neg2 = st.columns(3)
     neu2.code(f'Neutral : {df2.value_counts()[0]}')
-    neg2.error(f'Negative : {df2.value_counts()[1]}')
-    pos2.success(f'Positive : {df2.value_counts()[2]}')
+    pos2.error(f'Positive : {df2.value_counts()[1]}')
+    neg2.success(f'Negative : {df2.value_counts()[2]}')
     st.write('-----------')
 
     # API call to pull top 50 headlines with title, source, date, and sentiment score
@@ -533,10 +533,10 @@ if page == 'Two Tickers':
             df3 = pd.DataFrame(data=np.array(sentiment3), index=None,  columns=['sentiment'])
             st.title(f'{tick3}/{tick4} Headlines')
             # Displaying Sentiment Count for Top 50 Headlines
-            neu3, neg3, pos3 = st.columns(3)
+            neu3, pos3, neg3 = st.columns(3)
             neu3.code(f'Neutral : {df3.value_counts()[0]}')
-            neg3.error(f'Negative : {df3.value_counts()[1]}')
-            pos3.success(f'Positive : {df3.value_counts()[2]}')
+            pos3.error(f'Negative : {df3.value_counts()[1]}')
+            neg3.success(f'Positive : {df3.value_counts()[2]}')
             st.write('-----------')
 
             # API call to pull top 50 headlines with title, source, date, and sentiment score
