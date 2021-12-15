@@ -365,8 +365,8 @@ if page == 'Home Page':
     # Displaying Sentiment Count for Top 50 Headlines
     neu, pos, neg = st.columns(3)
     neu.code(f'Neutral : {df.value_counts()[0]}')
-    pos.error(f'Positive : {df.value_counts()[1]}')
-    neg.success(f'Negative : {df.value_counts()[2]}')
+    pos.success(f'Positive : {df.value_counts()[1]}')
+    neg.error(f'Negative : {df.value_counts()[2]}')
     st.write('-----------')
 
     # API call to pull top 50 headlines with title, source, date, and sentiment score
@@ -448,8 +448,8 @@ if page == 'One Ticker':
     # Displaying Sentiment Count for Top 50 Headlines
     neu2, pos2, neg2 = st.columns(3)
     neu2.code(f'Neutral : {df2.value_counts()[0]}')
-    pos2.error(f'Positive : {df2.value_counts()[1]}')
-    neg2.success(f'Negative : {df2.value_counts()[2]}')
+    pos2.success(f'Positive : {df2.value_counts()[1]}')
+    neg2.error(f'Negative : {df2.value_counts()[2]}')
     st.write('-----------')
 
     # API call to pull top 50 headlines with title, source, date, and sentiment score
@@ -535,8 +535,8 @@ if page == 'Two Tickers':
             # Displaying Sentiment Count for Top 50 Headlines
             neu3, pos3, neg3 = st.columns(3)
             neu3.code(f'Neutral : {df3.value_counts()[0]}')
-            pos3.error(f'Negative : {df3.value_counts()[1]}')
-            neg3.success(f'Positive : {df3.value_counts()[2]}')
+            pos3.success(f'Negative : {df3.value_counts()[1]}')
+            neg3.error(f'Positive : {df3.value_counts()[2]}')
             st.write('-----------')
 
             # API call to pull top 50 headlines with title, source, date, and sentiment score
