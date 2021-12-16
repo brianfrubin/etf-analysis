@@ -19,12 +19,12 @@ This ReadMe contains:
 
 |Name|File Type|Description|
 |---|---|--|
-|QuiverQuant_API|Jupyter Notebook|Initial overview of Quiver Quant API|
-|StockNews_API|Jupyter Notebook|Initial overview of StockNews API|
-|Nasdaq_API|Jupyter Notebook|Initial overview of Nasdaq Retail Tracker API|
-|Viz_EDA_Setup|Jupyter Notebook|Initial EDA / Analysis / Graphs |
-|Viz_EDA_Main|Jupyter Notebook| Main notebook for functions and visualizations used for Deployment|
-|PricePredictor|Jupyter Notebook|Logistic Regression Binary Classification Model|
+|01_QuiverQuant_API|Jupyter Notebook|Initial overview of Quiver Quant API|
+|02_StockNews_API|Jupyter Notebook|Initial overview of StockNews API|
+|03_Nasdaq_API|Jupyter Notebook|Initial overview of Nasdaq Retail Tracker API|
+|04_Viz_EDA_Setup|Jupyter Notebook|Initial EDA / Analysis / Graphs |
+|05_Viz_EDA_Main|Jupyter Notebook| Main notebook for functions and visualizations used for Deployment|
+|06_PricePredictor|Jupyter Notebook|Logistic Regression Binary Classification Model|
 |LITQ _ETF|Jupyter Notebook|Work in Progress - ETF Construction Tool|
 |ConfigAuthToken|Jupyter Notebook|Used to save API keys|
 |streamlit|folder|Contains streamlit-finance.py file for Dashboard Deployment|
