@@ -648,7 +648,7 @@ if page == 'Alt Data':
             'font':{
             'size':20}},
         delta = {
-            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-2][1], 'relative': True, 'valueformat':'.2%',
+            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-2][1], 'relative': False, 
             'font':{
             'size':40}},
         number = {
@@ -693,7 +693,7 @@ if page == 'Alt Data':
             'font':{
             'size':20}},
         delta = {
-            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-6][1], 'relative': True, 'valueformat':'.2%',
+            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-6][1], 'relative': False,
             'font':{
             'size':40}},
         number = {
