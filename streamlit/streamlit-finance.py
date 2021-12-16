@@ -306,7 +306,7 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 st.sidebar.title('Pulse Analytics')
 st.sidebar.subheader('Dashboard')
 ##setting up all the pages
-page = st.sidebar.selectbox( '', ('Home Page', 'One Ticker', 'Two Tickers', 'Performance', 'LITQ ETF'))
+page = st.sidebar.selectbox( '', ('Home Page', 'One Ticker', 'Two Tickers', 'Performance', 'Alt Data'))
 st.sidebar.write('--------')
 st.sidebar.write('--------')
 ##listing sources of data
@@ -601,16 +601,21 @@ if page == 'Performance':
 
         st.plotly_chart(ticker_cum_return(tick2, start2, end2))
 
-if page == 'LITQ ETF':
-    import quiverquant
-    token = quant_auth_key
-    quiver = quiverquant.quiver(token)
-    ticker = 'FB'
-    def get_wsb_stats(ticker):
-        WSB_quiver = quiver.wallstreetbets(ticker =f'{ticker}')
+if page == 'Alt Data':
+    st.title('ALTERNATIVE DATA')
+    st.write('-----------')
+    alt_tick = st.text_input('Select Ticker', 'GME')
+    st.write('-----------')
+    def get_wsb_stats(alt_tick):
+        url = f"https://api.quiverquant.com/beta/historical/wallstreetbets/{alt_tick}"
+        headers = {'accept': 'application/json',
+        'X-CSRFToken': 'TyTJwjuEC7VV7mOqZ622haRaaUr0x0Ng4nrwSRFKQs7vdoBcJlK9qjAS69ghzhFu',
+        'Authorization': f'Token {quant_auth_key}'}
+        r = requests.get(url, headers=headers)
+        WSB_quiver = df = pd.read_json(r.content)
         return WSB_quiver
-    WSB_quiver = get_wsb_stats(ticker)
-#    def get_indicator_mentions_daily(ticker):
+    WSB_quiver = get_wsb_stats(alt_tick)
+    uno, dos = st.columns(2)
     fig = go.Figure()
 
     fig.add_trace(go.Indicator(
@@ -632,6 +637,71 @@ if page == 'LITQ ETF':
     fig.update_layout(
         paper_bgcolor=None, height=200, width=200)
 
+    uno.plotly_chart(fig)
 
+    fig2 = go.Figure()
+    fig2.add_trace(go.Indicator(
+        align = 'center', mode = "number+delta", value = WSB_quiver[['Mentions', 'Rank']].iloc[-1][1] ,
+        title = {
+            "text": "WSB Rank<br><span style='font-size:0.8em;color:gray'>+ Daily Change</span><br><span style='font-size:0.8em;color:gray'>",
+            'font':{
+            'size':20}},
+        delta = {
+            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-2][1], 'relative': True, 'valueformat':'.2%',
+            'font':{
+            'size':40}},
+        number = {
+            'font':{
+            'size':40}},
+        domain = {
+            'x': [0, 0], 'y': [0, 0.001]}))
 
-    st.plotly_chart(fig)
+    fig2.update_layout(
+        paper_bgcolor=None, height=200, width=200)
+
+    dos.plotly_chart(fig2)
+
+    tres, cuatro = st.columns(2)
+    fig3 = go.Figure()
+
+    fig3.add_trace(go.Indicator(
+        align = 'center', mode = "number+delta", value = WSB_quiver[['Mentions', 'Rank']].iloc[-1][0] ,
+        title = {
+            "text": "WSB Mentions<br><span style='font-size:0.8em;color:gray'>+ Weekly Change</span><br><span style='font-size:0.8em;color:gray'>",
+            'font':{
+            'size':20}},
+        delta = {
+            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-6][0], 'relative': True, 'valueformat':'.2%',
+            'font':{
+            'size':40}},
+        number = {
+            'font':{
+            'size':40}},
+        domain = {
+            'x': [0, 0], 'y': [0, 0.001]}))
+    fig3.update_layout(
+                paper_bgcolor=None, height=200, width=200)
+
+    tres.plotly_chart(fig3)
+
+    fig4 = go.Figure()
+    fig4.add_trace(go.Indicator(
+        align = 'center', mode = "number+delta", value = WSB_quiver[['Mentions', 'Rank']].iloc[-1][1] ,
+        title = {
+            "text": "WSB Rank<br><span style='font-size:0.8em;color:gray'>+ Weekly Change</span><br><span style='font-size:0.8em;color:gray'>",
+            'font':{
+            'size':20}},
+        delta = {
+            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-6][1], 'relative': True, 'valueformat':'.2%',
+            'font':{
+            'size':40}},
+        number = {
+            'font':{
+            'size':40}},
+        domain = {
+            'x': [0, 0], 'y': [0, 0.001]}))
+
+    fig4.update_layout(
+        paper_bgcolor=None, height=200, width=200)
+
+    cuatro.plotly_chart(fig4)
