@@ -25,7 +25,7 @@ This ReadMe contains:
 |04_Viz_EDA_Setup|Jupyter Notebook|Initial EDA / Analysis / Graphs |
 |05_Viz_EDA_Main|Jupyter Notebook| Main notebook for functions and visualizations used for Deployment|
 |06_PricePredictor|Jupyter Notebook|Logistic Regression Binary Classification Model|
-|LITQ _ETF|Jupyter Notebook|Work in Progress - ETF Construction Tool|
+|07_LITQ _ETF|Jupyter Notebook|Work in Progress - ETF Construction Tool|
 |ConfigAuthToken|Jupyter Notebook|Used to save API keys|
 |streamlit|folder|Contains streamlit-finance.py file for Dashboard Deployment|
 
