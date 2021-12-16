@@ -415,7 +415,8 @@ if page == 'One Ticker':
     </style>
     """,
             unsafe_allow_html=True,
-        )
+        )    
+
     st.title('SELECT YOUR TICKER')
     st.write('-----------')
     my_bar = st.progress(0)
