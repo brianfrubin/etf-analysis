@@ -600,3 +600,38 @@ if page == 'Performance':
         st.write('-----------')
 
         st.plotly_chart(ticker_cum_return(tick2, start2, end2))
+
+if page == 'LITQ ETF':
+    import quiverquant
+    token = quant_auth_key
+    quiver = quiverquant.quiver(token)
+    ticker = 'FB'
+    def get_wsb_stats(ticker):
+        WSB_quiver = quiver.wallstreetbets(ticker =f'{ticker}')
+        return WSB_quiver
+    WSB_quiver = get_wsb_stats(ticker)
+#    def get_indicator_mentions_daily(ticker):
+    fig = go.Figure()
+
+    fig.add_trace(go.Indicator(
+        align = 'center', mode = "number+delta", value = WSB_quiver[['Mentions', 'Rank']].iloc[-1][0] ,
+        title = {
+            "text": "WSB Mentions<br><span style='font-size:0.8em;color:gray'>+ Daily Change</span><br><span style='font-size:0.8em;color:gray'>",
+            'font':{
+            'size':20}},
+        delta = {
+            'reference': WSB_quiver[['Mentions', 'Rank']].iloc[-2][0], 'relative': True, 'valueformat':'.2%',
+            'font':{
+            'size':40}},
+        number = {
+            'font':{
+            'size':40}},
+        domain = {
+            'x': [0, 0], 'y': [0, 0.001]}))
+
+    fig.update_layout(
+        paper_bgcolor=None, height=200, width=200)
+
+
+
+    st.plotly_chart(fig)
