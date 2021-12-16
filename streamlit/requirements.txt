@@ -3,3 +3,4 @@ requests==2.26.0
 streamlit>=1.0.0
 plotly==5.3.0
 numpy==1.21.4
+quiverquant==0.1.50
