@@ -390,6 +390,32 @@ if page == 'Home Page':
         st.write('------------')
 
 if page == 'One Ticker':
+    # Adjusting layout, found this solution : https://discuss.streamlit.io/t/where-to-set-page-width-when-set-into-non-widescreeen-mode/959
+    max_width= 1100
+    padding_top= 5
+    padding_right=1
+    padding_left=1
+    padding_bottom=10
+    COLOR = '#151620'
+    BACKGROUND_COLOR = '#151620'
+    st.markdown(
+            f"""
+    <style>
+        .reportview-container .main .block-container{{
+            max-width: {max_width}px;
+            padding-top: {padding_top}rem;
+            padding-right: {padding_right}rem;
+            padding-left: {padding_left}rem;
+            padding-bottom: {padding_bottom}rem;
+        }}
+        .reportview-container .main {{
+            color: {COLOR};
+            background-color: {BACKGROUND_COLOR};
+        }}
+    </style>
+    """,
+            unsafe_allow_html=True,
+        )    
 
     st.title('SELECT YOUR TICKER')
     st.write('-----------')
